@@ -1,20 +1,74 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, SafeAreaView, View, Text } from "react-native";
+import Square from "./components/square";
+import { useState, useEffect } from "react";
 
 export default function App() {
+  const [gameOver, setGameOver] = useState(false);
+  const [selectedSquare, setSelectedSquare] = useState(
+    Math.round(Math.random())
+  );
+  const [sequence, setSequence] = useState([]);
+
+  const handlePress = (squareNum) => {
+    if (squareNum === selectedSquare) {
+      const square = Math.round(Math.random());
+      console.log("square tapped. New selectedSquare is", square);
+      setSelectedSquare(square);
+      setSequence((prevSeq) => [...prevSeq, selectedSquare]);
+      console.log(sequence);
+    } else {
+      setGameOver(true);
+    }
+  };
+
+  // useEffect(() => {
+  //   setSequence((prevSeq) => [...prevSeq, selectedSquare]);
+  //   console.log(sequence);
+  // }, [selectedSquare]);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      {!gameOver ? (
+        <>
+          <Square
+            color="red"
+            selectedSquare={selectedSquare}
+            squareNum={0}
+            handlePress={handlePress}
+          />
+          <Square
+            color="blue"
+            selectedSquare={selectedSquare}
+            squareNum={1}
+            handlePress={handlePress}
+          />
+        </>
+      ) : (
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 30 }}>Game Over</Text>
+          <Text style={{ color: "white", fontSize: 30 }}>
+            Score: {sequence.length}
+          </Text>
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    backgroundColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
